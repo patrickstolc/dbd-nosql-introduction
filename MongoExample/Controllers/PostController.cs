@@ -72,6 +72,24 @@ public class PostController : ControllerBase
             return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
+
+    [HttpPost("{postId}/comments")]
+    public async Task<IActionResult> AddComment(string postId, [FromBody] Comment comment)
+    {
+        try
+        {
+            await _postService.AddCommentAsync(postId, comment);
+            return Ok();
+        }
+        catch (InvalidOperationException ex) when (ex.Message.Contains("Rate limit"))
+        {
+            return StatusCode(429, new { message = "Too many comments. Please try again later." });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "An error occurred while adding the comment." });
+        }
+    }
 }
 
 public class UpdatePostContentRequest

@@ -11,6 +11,14 @@ builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<PostService>();
 builder.Services.AddScoped<UserService>();
 
+// Add after other service registrations
+builder.Services.AddSingleton<IRedisService>(sp => 
+{
+    var configuration = sp.GetRequiredService<IConfiguration>();
+    var connectionString = configuration.GetValue<string>("Redis:ConnectionString");
+    return new RedisService(connectionString);
+});
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

@@ -43,4 +43,9 @@ public class PostRepository
 
         _posts.UpdateMany(filter, update);
     }
+
+    public void AddComment(string postId, Comment comment)
+    {
+        _posts.UpdateOne(p => p.Id == ObjectId.Parse(postId), Builders<Post>.Update.Push(p => p.Comments, comment));
+    }
 } 
